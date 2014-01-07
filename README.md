@@ -13,8 +13,10 @@ Quick Start
 ===========
     git clone https://github.com/ghafran/ios-pushtest.git
     cd ios-pushtest
+    npm install
     node server.js
 
+Now browse to http://localhost:3000/
 
 
 

@@ -1,0 +1,12 @@
+{
+  "name": "ios-pushtest",
+  "version": "0.0.1",
+  "dependencies": {
+    "apnagent": "latest",
+    "express": "latest",
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+  }
+}
