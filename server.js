@@ -113,34 +113,68 @@ app.configure(function () {
 
 app.post('/apn', function (req, res) {
     var agent = app.get('apn')
-        , alert = req.body.alert
+        , silent = req.body.silent
+        , message = req.body.message
+        , badge = req.body.badge
+        , sound = req.body.sound
         , token = req.body.token;
+    
+    var data = {
+        silent: req.body.silent,
+        message: req.body.message,
+        badge: req.body.badge,
+        sound: req.body.sound,
+        token: req.body.token
+    };
     
     var a = agent.createMessage();
     
     a.device(token);
-    
-    if(alert.length == 0){
-        //a.set('content-available', 1);
+
+    // Silent Payload
+    if(silent == true){
+        
         a.contentAvailable(1);
-    } else {
-        a.set('body', alert);
+    }
+    
+    // Message Payload
+    if(message.length > 0){
+        
+        a.alert(message);
+    }
+    
+    // Badge Payload
+    if(badge > -1){
+        
+        a.badge(parseInt(badge));
+    }
+    
+    // Sound Payload
+    if(sound.length > 0){
+        
+        a.sound(sound);
     }
     
     a.send(function (err) {
         // handle apnagent custom errors
         if (err && err.toJSON) {
-            res.json(400, { error: err.toJSON(false) });
+            var output = { success: false, error: err.toJSON(false), data: data };
+            res.json(400, output);
+            console.log(JSON.stringify(output));
         } 
         
         // handle anything else (not likely)
         else if (err) {
-            res.json(400, { error: err.message });
+            var output = { success: false, error: err.message, data: data };
+            res.json(400, output);
+            console.log(JSON.stringify(output));
         }
         
         // it was a success
         else {
-            res.json({ success: true });
+            var output = { success: true, data: data };
+            res.json(200, output);
+            console.log(JSON.stringify(output));
         }
     });
 });

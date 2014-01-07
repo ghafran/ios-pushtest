@@ -4,46 +4,102 @@
     <head>
         <meta charset="utf-8" />
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="jquery.cookie.js"></script>
         <script>
         
         $(function(){
+            
+            $.cookie.json = true;
+            
+            // load state
+            var data = $.cookie("state");
+            loadState(data);
             
             $("#go").click(function(){
                 
                 $("#output").val('working...');
                 
-                var token = $("#token").val();
-                var message = $("#message").val();;
+                var state = getState();
+                
+                // save state
+                $.cookie("state", state);
 
                 $.ajax({
                     url: "/apn",
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({token: token, alert: message}),
+                    data: JSON.stringify(state),
                     success: function(data) {
 
-                        $("#output").val(JSON.stringify(data));
+                        $("#output").html(JSON.stringify(data));
                     },
                     error: function(request, status, error) {
                         
-                        $("#output").val(JSON.stringify(error));
+                        $("#output").html(JSON.stringify(error));
                     }
                 });
             });
                 
         });
         
+        function getState(){
+            var token = $("#token").val();
+            var silent = $("#silent").is(':checked');
+            var message = $("#message").val();
+            var badge = $("#badge").val();
+            var sound = $("#sound").val();
+            
+            var data = { token: token, silent: silent, message: message, badge: badge, sound: sound };
+            
+            return data;
+        }
+        
+        function loadState(data){
+            if(data){
+                if(data.token){
+                    $("#token").val(data.token);
+                }
+                if(data.silent){
+                    $("#silent").prop('checked', data.silent);
+                }
+                if(data.message){
+                    $("#message").val(data.message);
+                }
+                if(data.badge){
+                    $("#badge").val(data.badge);
+                }
+                if(data.sound){
+                    $("#sound").val(data.sound);
+                }
+            }
+        }
+        
         </script>
     </head>
 <body>
 
-Token: <input type="text" id="token" value="8e46e08ee96aad109aa80d0c080d978693c487c65c54adc72b96b487417bb7dd" style="width: 300px" />
+<h1>iOS Push Test</h1>
 
-<br /> message<input type="text" id="message" value="hello world" style="width: 300px" />
+Device Push Token: 
+<br /> <input type="text" id="token" value="" placeholder="past device push token here" style="width: 500px" />
+<br />
+<br />Silent:
+<br /><input type="checkbox" id="silent" />
+<br />
+<br />Payload Message:
+<br /><input type="text" id="message" value="" placeholder="enter message payload here" style="width: 500px" />
+<br />
+<br />Payload Badge:
+<br /><input type="number" id="badge" value="-1" placeholder="enter badge payload here" /> -1 = do not send
+<br />
+<br />Payload Sound:
+<br /><input type="text" id="sound" value="" placeholder="enter sound payload here" style="width: 500px" />
 
-<br /><input type="button" value="submit" id="go" />
+<br />
+<br /><input type="button" id="go" value="Send Push" />
 
-<br /> output<input type="text" id="output"style="width: 300px" />
+<br />
+<br /><div id="output"></div>
 
 </body>
 </html>
