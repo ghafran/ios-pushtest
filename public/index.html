@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+        
+        $(function(){
+            
+            $("#go").click(function(){
+                
+                $("#output").val('working...');
+                
+                var token = $("#token").val();
+                var message = $("#message").val();;
+
+                $.ajax({
+                    url: "/apn",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({token: token, alert: message}),
+                    success: function(data) {
+
+                        $("#output").val(JSON.stringify(data));
+                    },
+                    error: function(request, status, error) {
+                        
+                        $("#output").val(JSON.stringify(error));
+                    }
+                });
+            });
+                
+        });
+        
+        </script>
+    </head>
+<body>
+
+Token: <input type="text" id="token" value="8e46e08ee96aad109aa80d0c080d978693c487c65c54adc72b96b487417bb7dd" style="width: 300px" />
+
+<br /> message<input type="text" id="message" value="hello world" style="width: 300px" />
+
+<br /><input type="button" value="submit" id="go" />
+
+<br /> output<input type="text" id="output"style="width: 300px" />
+
+</body>
+</html>
