@@ -1,7 +1,9 @@
 ios-pushtest
 ============
 
-sample website to test ios apn service
+Need to quickly setup a service to send push notifications to your iOS app?
+
+Well you've come to the right place!
 
 Quick Start
 ===========
