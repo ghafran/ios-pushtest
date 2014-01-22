@@ -2,7 +2,7 @@
  * Example dependencies / constants
  */
 
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'staging_prod';
 
 var apnagent = require('apnagent')
   , express = require('express')
@@ -40,18 +40,13 @@ app.configure('development', 'test', function () {
     .set('apn-env', 'mock');
 });
 
-/**
- * Usa a live Agent with sandbox certificates
- * for our staging environment.
- */
-
-app.configure('staging', function () {
+app.configure('staging_dev', function () {
   var agent = new apnagent.Agent();
 
   // configure agent
   agent 
-    .set('cert file', join(__dirname, 'certs/apn/dev_cert.pem'))
-    .set('key file', join(__dirname, 'certs/apn/dev_key.pem'))
+    .set('cert file', join(__dirname, 'certs/sr_stg_dev_cert.pem'))
+    .set('key file', join(__dirname, 'certs/sr_stg_dev_key.pem'))
     .enable('sandbox');
 
   // mount to app
@@ -60,18 +55,44 @@ app.configure('staging', function () {
     .set('apn-env', 'live-sandbox');
 });
 
-/**
- * Use a live Agent with production certificates
- * for our production environment.
- */
-
-app.configure('production', function () {
+app.configure('staging_prod', function () {
   var agent = new apnagent.Agent();
 
   // configure agent
   agent 
-    .set('cert file', join(__dirname, 'certs/apn/prod_cert.pem'))
-    .set('key file', join(__dirname, 'certs/apn/prod_key.pem'));
+    .set('cert file', join(__dirname, 'certs/sr_stg_prod_cert.pem'))
+    .set('key file', join(__dirname, 'certs/sr_stg_prod_key.pem'));
+
+  // mount to app
+  app
+    .set('apn', agent)
+    .set('apn-env', 'live-production');
+});
+
+
+app.configure('production_dev', function () {
+  var agent = new apnagent.Agent();
+
+  // configure agent
+  agent 
+    .set('cert file', join(__dirname, 'certs/sr_dev_cert.pem'))
+    .set('key file', join(__dirname, 'certs/sr_dev_key.pem'))
+    .enable('sandbox');
+
+  // mount to app
+  app
+    .set('apn', agent)
+    .set('apn-env', 'live-sandbox');
+});
+
+
+app.configure('production_prod', function () {
+  var agent = new apnagent.Agent();
+
+  // configure agent
+  agent 
+    .set('cert file', join(__dirname, 'certs/sr_prod_cert.pem'))
+    .set('key file', join(__dirname, 'certs/sr_prod_key.pem'));
 
   // mount to app
   app
@@ -117,14 +138,16 @@ app.post('/apn', function (req, res) {
         , message = req.body.message
         , badge = req.body.badge
         , sound = req.body.sound
-        , token = req.body.token;
+        , token = req.body.token
+        , image = req.body.image;
     
     var data = {
         silent: req.body.silent,
         message: req.body.message,
         badge: req.body.badge,
         sound: req.body.sound,
-        token: req.body.token
+        token: req.body.token,
+        image: req.body.image
     };
     
     var a = agent.createMessage();
@@ -153,6 +176,12 @@ app.post('/apn', function (req, res) {
     if(sound.length > 0){
         
         a.sound(sound);
+    }
+    
+    // Image Payload
+    if(image.length > 0){
+        
+        a.alert('launch-image', image);
     }
     
     a.send(function (err) {

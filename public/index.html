@@ -48,8 +48,9 @@
             var message = $("#message").val();
             var badge = $("#badge").val();
             var sound = $("#sound").val();
+            var image = $("#image").val();
             
-            var data = { token: token, silent: silent, message: message, badge: badge, sound: sound };
+            var data = { token: token, silent: silent, message: message, badge: badge, sound: sound, image: image };
             
             return data;
         }
@@ -70,6 +71,9 @@
                 }
                 if(data.sound){
                     $("#sound").val(data.sound);
+                }
+                if(data.image){
+                    $("#image").val(data.image);
                 }
             }
         }
@@ -94,6 +98,9 @@ Device Push Token:
 <br />
 <br />Payload Sound:
 <br /><input type="text" id="sound" value="" placeholder="enter sound payload here" style="width: 500px" />
+<br />
+<br />Payload Launch Image:
+<br /><input type="text" id="image" value="" placeholder="enter image payload here" style="width: 500px" />
 
 <br />
 <br /><input type="button" id="go" value="Send Push" />
