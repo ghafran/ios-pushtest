@@ -2,7 +2,7 @@
  * Example dependencies / constants
  */
 
-process.env.NODE_ENV = 'staging_prod';
+process.env.NODE_ENV = 'staging_dev';
 
 var apnagent = require('apnagent')
   , express = require('express')
