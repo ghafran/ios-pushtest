@@ -139,7 +139,11 @@ app.post('/apn', function (req, res) {
         , badge = req.body.badge
         , sound = req.body.sound
         , token = req.body.token
-        , image = req.body.image;
+        , image = req.body.image
+        , customkey1 = req.body.customkey1
+        , customvalue1 = req.body.customvalue1
+        , customkey2 = req.body.customkey2
+        , customvalue2 = req.body.customvalue2;
     
     var data = {
         silent: req.body.silent,
@@ -147,7 +151,11 @@ app.post('/apn', function (req, res) {
         badge: req.body.badge,
         sound: req.body.sound,
         token: req.body.token,
-        image: req.body.image
+        image: req.body.image,
+        customkey1: req.body.customkey1,
+        customvalue1: req.body.customvalue1,
+        customkey2: req.body.customkey2,
+        customvalue2: req.body.customvalue2
     };
     
     var a = agent.createMessage();
@@ -182,6 +190,16 @@ app.post('/apn', function (req, res) {
     if(image.length > 0){
         
         a.alert('launch-image', image);
+    }
+    
+    if(customkey1.length > 0){
+        
+        a.set(customkey1, customvalue1);    
+    }
+    
+    if(customkey2.length > 0){
+        
+        a.set(customkey2, customvalue2);    
     }
     
     a.send(function (err) {
